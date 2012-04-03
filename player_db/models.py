@@ -1,9 +1,12 @@
 from django.db import models
 
 GAME_TYPE = (
-	("Test", "Test Matches"),
-	("ODI", "One-day Internationals"),
-	("IPL", "Indian Premier League")
+	("Tests", "Test Matches"),
+	("ODIs", "One-day Internationals"),
+	#("IPL", "Indian Premier League")
+	("First-class", "First-class"),
+	("List A", "List A"),
+	("Twenty20", "T20")
 )
 
 INTERNATIONAL_TEAMS = (
@@ -43,6 +46,10 @@ IPL_TEAMS = (
 
 # Create your models here.
 class Player(models.Model):
+
+
+
+
 	first_name = models.CharField(max_length=30, default = "")
 	middle_name = models.CharField(max_length=30, default = "")
 	last_name = models.CharField(max_length=30, default = "")
@@ -50,7 +57,6 @@ class Player(models.Model):
 	cricinfo_id = models.CharField(max_length=6, default = "")
 	player_country = models.CharField(max_length=30, choices=INTERNATIONAL_TEAMS)
 	ipl_total_money_spent = models.FloatField(default=0)
-
 
 
 

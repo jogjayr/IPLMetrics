@@ -19,7 +19,10 @@ class ProfileScraper:
 
 	def scrape_player_info(self):
 		player_info = {}
+
+		# Lookup dict for month number, given full month name
 		month_dict = dict((v,k) for k,v in enumerate(calendar.month_name))
+
 		player_full_name = self.soup.find("p", "ciPlayerinformationtxt").find("span").getText()
 		player_name_array = re.split(" ", player_full_name)
 		length = len(player_name_array)
@@ -45,9 +48,15 @@ class ProfileScraper:
 		batting_metrics = ["Type", "Matches", "Innings", "NotOuts", "Runs", "HighScore", "Average", "BallsFaced", "StrikeRate", "Centuries", "Fifties", "Fours", "Sixes", "Catches", "Stumpings"]
 		for tag in batting_stats_soup:
 			batting_stats_row = tag.find_all("td")
-			# batting_stats_key = batting_stats_row[0].getText()
+			
 			for index in range(len(batting_stats_row)):
-				batting_stat_instance[batting_metrics[index]] = batting_stats_row[index].getText()
+
+				stat_item = batting_stats_row[index].getText()
+				if stat_item == "":
+					stat_item = -1
+
+				batting_stat_instance[batting_metrics[index]] = stat_item
+
 
 			batting_stats.append(batting_stat_instance)
 			batting_stat_instance = {}
