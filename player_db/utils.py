@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 from datetime import date
 import urllib, re, calendar
 
+
+
+
 class ProfileScraper:
 	
 	def __init__(self, profile_id):
@@ -63,3 +66,28 @@ class ProfileScraper:
 
 
 		return batting_stats
+
+
+class InningsScraper:
+	def __init__(self, profile_id):
+		self.profile_id = profile_id		
+
+	class_lookup = {
+		"Test" : 1,
+		"ODI" : 2,
+		"T20I" : 3,
+		"WTest": 8, #W prefix indicates women's
+		"WODI": 9,
+		"WT20I": 10,
+		"CombinedTestODIT20I": 11,
+		"U19Tests": 20,
+		"U19ODI": 21,
+		
+	}
+
+	def test_innings_scraper(self):
+		innings_url = "http://stats.espncricinfo.com/ci/engine/player/" + self.profile_id + ".html?class=1;template=results;type=batting;view=innings"
+		response = urllib.urlopen(profile_url)
+		self.soup = BeautifulSoup(response.read())
+
+	def odi_innings_scraper(self):
