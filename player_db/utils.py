@@ -9,7 +9,10 @@ import urllib, re, calendar, json
 
 class SquadScraper:
 	pipes_lookup = {
-		"CSK": "http://pipes.yahoo.com/pipes/pipe.run?_id=cba6df8913eab238ead7377fef7e2b5a&_render=json"
+		"CSK": "http://pipes.yahoo.com/pipes/pipe.run?_id=cba6df8913eab238ead7377fef7e2b5a&_render=json",
+		"DC" : "http://pipes.yahoo.com/pipes/pipe.run?_id=56325f18c0dc8bf9c7cdf167f555912a&_render=json",
+		"DD" : "http://pipes.yahoo.com/pipes/pipe.run?_id=ce40eddcd1bc236c290e13effeb9e512&_render=json",
+		"KXP": "http://pipes.yahoo.com/pipes/pipe.run?_id=d5eae8ddc8449eba91a9ac5e67d6b551&_render=json"
 	}
 
 
@@ -79,7 +82,10 @@ class ProfileScraper:
 			for index in range(len(batting_stats_row)):
 
 				stat_item = batting_stats_row[index].getText()
-				stat_item = re.sub("\D", "", stat_item)
+				# stat_item = re.sub("\D", "", stat_item)
+				if(index != 0 and index != 6 and index != 8):
+					stat_item = re.sub("\D", "", stat_item)
+					
 				if stat_item == "" or stat_item == "-":
 					stat_item = -1
 

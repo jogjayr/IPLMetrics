@@ -4,7 +4,7 @@ import re
 GAME_TYPE = (
 	("Tests", "Test Matches"),
 	("ODIs", "One-day Internationals"),
-	#("IPL", "Indian Premier League")
+	("T20Is", "Twenty20 International"),
 	("First-class", "First-class"),
 	("List A", "List A"),
 	("Twenty20", "T20")
@@ -83,7 +83,7 @@ class BattingStat(models.Model):
 	fifties = models.IntegerField(default=0)
 	fours = models.IntegerField(default=0)
 	sixes = models.IntegerField(default=0)
-	game_type = models.CharField(max_length="10", choices=GAME_TYPE)
+	game_type = models.CharField(max_length="20", choices=GAME_TYPE)
 	player = models.ForeignKey(Player)
 
 	
@@ -123,7 +123,7 @@ class Inning(models.Model):
 	minutes_batted = models.IntegerField(default=0)
 	opposition = models.CharField(max_length=30, choices=OPPOSITION)
 	date = models.DateField()
-	game_type = models.CharField(max_length="10", choices=GAME_TYPE)
+	game_type = models.CharField(max_length="20", choices=GAME_TYPE)
 
 	# test_matches_played = models.IntegerField(default=0)
 	# test_innings_batted = models.IntegerField(default=0)
