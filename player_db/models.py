@@ -1,4 +1,5 @@
 from django.db import models
+import re
 
 GAME_TYPE = (
 	("Tests", "Test Matches"),
@@ -58,7 +59,15 @@ class Player(models.Model):
 	player_country = models.CharField(max_length=30, choices=INTERNATIONAL_TEAMS)
 	ipl_total_money_spent = models.FloatField(default=0)
 
-
+	@staticmethod
+	def create_player(profile_info, cric_info_id):
+		new_player_object = Player(first_name=profile_info["FirstName"], 
+			middle_name=profile_info["MiddleName"], 
+			last_name=profile_info["LastName"], 
+			date_of_birth=profile_info["DateOfBirth"], 
+			cricinfo_id=cric_info_id)
+		new_player_object.save()
+		return new_player_object
 
 class BattingStat(models.Model):
 	#batting stats
@@ -76,6 +85,29 @@ class BattingStat(models.Model):
 	sixes = models.IntegerField(default=0)
 	game_type = models.CharField(max_length="10", choices=GAME_TYPE)
 	player = models.ForeignKey(Player)
+
+	
+	@staticmethod
+	def create_batting_stat(batting_stat_row, new_player_object):
+		batting_stat_obj = BattingStat( matches_played = int(batting_stat_row["Matches"]),
+										innings_batted = int(batting_stat_row["Innings"]),
+										not_outs = int(re.sub("\D", "", batting_stat_row["NotOuts"])),
+										runs_scored = int(batting_stat_row["Runs"]),
+										high_score = int(re.sub("\D", "", batting_stat_row["HighScore"])),
+										batting_average = float(batting_stat_row["Average"]),
+										balls_faced = int(batting_stat_row["BallsFaced"]),
+										batting_strike_rate = float(batting_stat_row["StrikeRate"]),
+										centuries = int(batting_stat_row["Centuries"]),
+										fifties = int(batting_stat_row["Fifties"]),
+										fours = int(batting_stat_row["Fours"]),
+										sixes = int(batting_stat_row["Sixes"]),
+										game_type = batting_stat_row["Type"])
+		batting_stat_obj.player = new_player_object;
+		batting_stat_obj.save()
+
+		return batting_stat_obj
+
+
 
 #Used to model every single innings played by a player
 class Inning(models.Model):

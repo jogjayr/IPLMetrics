@@ -1,9 +1,31 @@
 ## Contains utility classes.
 from bs4 import BeautifulSoup
 from datetime import date
-import urllib, re, calendar
+import urllib, re, calendar, json
 
 
+
+
+
+class SquadScraper:
+	pipes_lookup = {
+		"CSK": "http://pipes.yahoo.com/pipes/pipe.run?_id=cba6df8913eab238ead7377fef7e2b5a&_render=json"
+	}
+
+
+	def scrape_entire_squad(self, team_name):
+		url = self.pipes_lookup[team_name]
+		response_obj = json.load(urllib.urlopen(url))
+		markup_list = response_obj["value"]["items"]
+		returnVal = []
+		for item in markup_list:
+			tag = BeautifulSoup(item["content"]).find("a")
+			if(tag != None):
+				id_finder = re.findall("\d*.html", tag["href"])
+				if len(id_finder) == 1:
+					returnVal.append(id_finder[0].split(".")[0])
+
+		return returnVal
 
 
 class ProfileScraper:
@@ -13,6 +35,8 @@ class ProfileScraper:
 		profile_url = "http://www.espncricinfo.com/ci/content/player/" + self.profile_id + ".html"
 		response = urllib.urlopen(profile_url)
 		self.soup = BeautifulSoup(response.read())
+
+
 
 	def scrape_profile(self):
 		profile = {}
@@ -73,16 +97,15 @@ class InningsScraper:
 		self.profile_id = profile_id		
 
 	class_lookup = {
-		"Test" : 1,
-		"ODI" : 2,
-		"T20I" : 3,
-		"WTest": 8, #W prefix indicates women's
-		"WODI": 9,
-		"WT20I": 10,
-		"CombinedTestODIT20I": 11,
+		"Test" : "1",
+		"ODI" : "2",
+		"T20I" : "3",
+		"WTest": "8", #W prefix indicates women's
+		"WODI": "9",
+		"WT20I": "10",
+		"CombinedTestODIT20I": "11",
 		"U19Tests": 20,
 		"U19ODI": 21,
-		
 	}
 
 	def test_innings_scraper(self):
@@ -90,4 +113,4 @@ class InningsScraper:
 		response = urllib.urlopen(profile_url)
 		self.soup = BeautifulSoup(response.read())
 
-	def odi_innings_scraper(self):
+	# def odi_innings_scraper(self):
