@@ -91,9 +91,11 @@ class BattingStat(models.Model):
 	def create_batting_stat(batting_stat_row, new_player_object):
 		batting_stat_obj = BattingStat( matches_played = int(batting_stat_row["Matches"]),
 										innings_batted = int(batting_stat_row["Innings"]),
-										not_outs = int(re.sub("\D", "", batting_stat_row["NotOuts"])),
+										# not_outs = int(re.sub("\D", "", batting_stat_row["NotOuts"])),
+										not_outs = int(batting_stat_row["NotOuts"]),
 										runs_scored = int(batting_stat_row["Runs"]),
-										high_score = int(re.sub("\D", "", batting_stat_row["HighScore"])),
+										# high_score = int(re.sub("\D", "", batting_stat_row["HighScore"])),
+										high_score =  int(batting_stat_row["HighScore"]),
 										batting_average = float(batting_stat_row["Average"]),
 										balls_faced = int(batting_stat_row["BallsFaced"]),
 										batting_strike_rate = float(batting_stat_row["StrikeRate"]),

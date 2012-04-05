@@ -15,32 +15,12 @@ def player_add(request, cric_info_id):
 		scraper = ProfileScraper(cric_info_id)
 		profile_info = scraper.scrape_profile()
 
-		# new_player_object = Player(first_name=profile_info["player_info"]["FirstName"], 
-		# 	middle_name=profile_info["player_info"]["MiddleName"], 
-		# 	last_name=profile_info["player_info"]["LastName"], 
-		# 	date_of_birth=profile_info["player_info"]["DateOfBirth"], 
-		# 	cricinfo_id=cric_info_id)
-
 		new_player_object = Player.create_player(profile_info["player_info"], cric_info_id)
 		returnVal = ""
-		# new_player_object.save()
+		
 		if(new_player_object.id != None):
 			for batting_stat_row in profile_info["batting_stats"]:
-				# batting_stat_obj = BattingStat( matches_played = int(batting_stat_row["Matches"]),
-				# 								innings_batted = int(batting_stat_row["Innings"]),
-				# 								not_outs = int(re.sub("\D", "", batting_stat_row["NotOuts"])),
-				# 								runs_scored = int(batting_stat_row["Runs"]),
-				# 								high_score = int(re.sub("\D", "", batting_stat_row["HighScore"])),
-				# 								batting_average = float(batting_stat_row["Average"]),
-				# 								balls_faced = int(batting_stat_row["BallsFaced"]),
-				# 								batting_strike_rate = float(batting_stat_row["StrikeRate"]),
-				# 								centuries = int(batting_stat_row["Centuries"]),
-				# 								fifties = int(batting_stat_row["Fifties"]),
-				# 								fours = int(batting_stat_row["Fours"]),
-				# 								sixes = int(batting_stat_row["Sixes"]),
-				# 								game_type = batting_stat_row["Type"])
-				# batting_stat_obj.player = new_player_object;
-				# batting_stat_obj.save()
+				
 				batting_stat_obj = BattingStat.create_batting_stat(batting_stat_row, new_player_object)
 
 				if(batting_stat_obj.id == None):
@@ -55,11 +35,28 @@ def player_add(request, cric_info_id):
 	else:
 		return HttpResponse("We already had him")
 
+
+## Pass this method an IPL team name (one of those defined in SquadScraper.scrape_squad)
+## and it will scrap the squad Yahoo pipe for the players and add them all into the database
 @transaction.commit_on_success
 def scrape_squad(request, team_name):
 	scraper = SquadScraper()
 
 	cricinfo_ids = scraper.scrape_entire_squad(team_name)
 	for id in cricinfo_ids:
-		profile_scraper = ProfileScraper(id)
+		if(len(Player.objects.filter(cricinfo_id=id)) == 0):
+			profile_scraper = ProfileScraper(id)
+			profile_info = profile_scraper.scrape_profile()
+
+			new_player_object = Player.create_player(profile_info["player_info"], id)
+
+			if(new_player_object.id != None):
+				for batting_stat_row in profile_info["batting_stats"]:
+				
+					batting_stat_obj = BattingStat.create_batting_stat(batting_stat_row, new_player_object)
+
+					if(batting_stat_obj.id == None):
+						return HttpResponse("something went wrong parsing " + json.dumps(batting_stat_row))
+
+
 	return HttpResponse(scraper.scrape_entire_squad(team_name))

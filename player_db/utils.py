@@ -79,7 +79,8 @@ class ProfileScraper:
 			for index in range(len(batting_stats_row)):
 
 				stat_item = batting_stats_row[index].getText()
-				if stat_item == "":
+				stat_item = re.sub("\D", "", stat_item)
+				if stat_item == "" or stat_item == "-":
 					stat_item = -1
 
 				batting_stat_instance[batting_metrics[index]] = stat_item
