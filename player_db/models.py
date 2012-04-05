@@ -86,6 +86,21 @@ class BattingStat(models.Model):
 	game_type = models.CharField(max_length="20", choices=GAME_TYPE)
 	player = models.ForeignKey(Player)
 
+	def get_values_list(self):
+		return [self.matches_played ,
+	self.innings_batted ,
+	self.not_outs ,
+	self.runs_scored ,
+	self.high_score ,
+	self.batting_average ,
+	self.balls_faced ,
+	self.batting_strike_rate ,
+	self.centuries ,
+	self.fifties ,
+	self.fours ,
+	self.sixes ,
+	self.game_type ,
+	self.player ]
 	
 	@staticmethod
 	def create_batting_stat(batting_stat_row, new_player_object):
