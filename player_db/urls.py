@@ -10,4 +10,5 @@ urlpatterns = patterns("player_db.views",
 	url(r'^fc_batting/$', "first_class_batting_records"),
 	url(r'^lista_batting/$', "list_a_batting_records"),
 	url(r'^t20_batting/$', "t20_batting_records")
+
 )

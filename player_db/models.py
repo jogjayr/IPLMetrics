@@ -1,5 +1,7 @@
 from django.db import models
+from datetime import date
 import re
+
 
 GAME_TYPE = (
 	("Tests", "Test Matches"),
@@ -11,26 +13,26 @@ GAME_TYPE = (
 )
 
 INTERNATIONAL_TEAMS = (
-	("AFG", "Afghanistan"),
-	("AUS", "Australia"),
-	("BAN", "Bangladesh"),
-	("BER", "Bermuda"),
-	("CAN", "Canada"),
-	("ENG", "England"),
-	("FRA", "France"),
-	("GER", "Germany"),
-	("HOL", "Holland"),
-	("IND", "India"),
-	("IRL", "Ireland"),
-	("ITL", "Italy"),
-	("KEN", "Kenya"),
-	("NAM", "Namibia"),
-	("NZL", "New Zealand"),
-	("PAK", "Pakistan"),
-	("SRL", "Sri Lanka"),
+	("Afghanistan", "Afghanistan"),
+	("Australia", "Australia"),
+	("Bangladesh", "Bangladesh"),
+	("Bermuda", "Bermuda"),
+	("Canada", "Canada"),
+	("England", "England"),
+	("France", "France"),
+	("Germany", "Germany"),
+	("Holland", "Holland"),
+	("India", "India"),
+	("Ireland", "Ireland"),
+	("Italy", "Italy"),
+	("Kenya", "Kenya"),
+	("Namibia", "Namibia"),
+	("New Zealand", "New Zealand"),
+	("Pakistan", "Pakistan"),
+	("Sri Lanka", "Sri Lanka"),
 	("USA", "USA"),
-	("WIN", "West Indies"),
-	("ZIM", "Zimbabwe")
+	("West Indies", "West Indies"),
+	("Zimbabwe", "Zimbabwe")
 )
 
 IPL_TEAMS = (
@@ -48,9 +50,6 @@ IPL_TEAMS = (
 # Create your models here.
 class Player(models.Model):
 
-
-
-
 	first_name = models.CharField(max_length=30, default = "")
 	middle_name = models.CharField(max_length=30, default = "")
 	last_name = models.CharField(max_length=30, default = "")
@@ -64,7 +63,8 @@ class Player(models.Model):
 		new_player_object = Player(first_name=profile_info["FirstName"], 
 			middle_name=profile_info["MiddleName"], 
 			last_name=profile_info["LastName"], 
-			date_of_birth=profile_info["DateOfBirth"], 
+			date_of_birth=profile_info["DateOfBirth"],
+			player_country=profile_info["Country"],
 			cricinfo_id=cric_info_id)
 		new_player_object.save()
 		return new_player_object
@@ -128,80 +128,32 @@ class BattingStat(models.Model):
 
 #Used to model every single innings played by a player
 class Inning(models.Model):
-	OPPOSITION = INTERNATIONAL_TEAMS + IPL_TEAMS
+	ALL_TEAMS = INTERNATIONAL_TEAMS + IPL_TEAMS
 	player = models.ForeignKey(Player)
 	runs_scored = models.IntegerField(default=0)
 	balls_faced = models.IntegerField(default=0)
 	was_out = models.BooleanField(default=True)
+	position = models.IntegerField(default=1,null=True)
 	fours = models.IntegerField(default=0)
 	sixes = models.IntegerField(default=0)
 	minutes_batted = models.IntegerField(default=0)
-	opposition = models.CharField(max_length=30, choices=OPPOSITION)
-	date = models.DateField()
+	opposition = models.CharField(max_length=30, choices=ALL_TEAMS)
+	player_team = models.CharField(max_length=30, choices=ALL_TEAMS, null=True)
+	date = models.DateField(null=True, default=date(3000, 12, 12))
+	match_result = models.CharField(max_length=4, choices=(("Win", "Win"), ("Lose", "Lose"), ("Draw", "Draw"), ("Tie", "Tie")), null=True)
 	game_type = models.CharField(max_length="20", choices=GAME_TYPE)
 
-	# test_matches_played = models.IntegerField(default=0)
-	# test_innings_batted = models.IntegerField(default=0)
-	# test_not_outs = models.IntegerField(default=0)
-	# test_runs_scored = models.IntegerField(default=0)
-	# test_high_score = models.IntegerField(default=0)
-	# test_batting_average = models.FloatField()
-	# test_balls_faced = models.IntegerField(default=0)
-	# test_batting_strike_rate = models.FloatField()
-	# test_centuries = models.IntegerField(default=0)
-	# test_fifties = models.IntegerField(default=0)
-	# test_fours = models.IntegerField(default=0)
-	# test_sixes = models.IntegerField(default=0)
-
-	# odi_matches_played = models.IntegerField(default=0)
-	# odi_innings_batted = models.IntegerField(default=0)
-	# odi_not_outs = models.IntegerField(default=0)
-	# odi_runs_scored = models.IntegerField()
-	# odi_high_score = models.IntegerField()
-	# odi_batting_average = models.FloatField()
-	# odi_balls_faced = models.IntegerField()
-	# odi_batting_strike_rate = models.FloatField()
-	# odi_centuries = models.IntegerField()
-	# odi_fifties = models.IntegerField()
-	# odi_fours = models.IntegerField()
-	# odi_sixes = models.IntegerField()
-
-	# #bowling stats
-	# ipl_innings_bowled = models.IntegerField()
-	# ipl_balls_bowled = models.IntegerField()
-	# ipl_maidens_bowled = models.IntegerField()
-	# ipl_runs_conceded = models.IntegerField()
-	# ipl_wickets_taken = models.IntegerField()
-	# ipl_best_bowling = models.CommaSeparatedIntegerField(max_length=2)
-	# ipl_bowling_average = models.FloatField()
-	# ipl_economy_rate = models.FloatField()
-	# ipl_bowling_strike_rate = models.FloatField()
-	# ipl_four_wicket_hauls = models.IntegerField()
-	# ipl_five_wicket_hauls = models.IntegerField()
-
-
-	# test_innings_bowled = models.IntegerField()
-	# test_balls_bowled = models.IntegerField()
-	# test_maidens_bowled = models.IntegerField()
-	# test_runs_conceded = models.IntegerField()
-	# test_wickets_taken = models.IntegerField()
-	# test_best_bowling = models.CommaSeparatedIntegerField(max_length=2)
-	# test_bowling_average = models.FloatField()
-	# test_economy_rate = models.FloatField()
-	# test_bowling_strike_rate = models.FloatField()
-	# test_five_wicket_hauls = models.IntegerField()
-	# test_ten_wicket_hauls = models.IntegerField()
-	
-
-	# odi_innings_bowled = models.IntegerField()
-	# odi_balls_bowled = models.IntegerField()
-	# odi_maidens_bowled = models.IntegerField()
-	# odi_runs_conceded = models.IntegerField()
-	# odi_wickets_taken = models.IntegerField()
-	# odi_best_bowling = models.CommaSeparatedIntegerField(max_length=2)
-	# odi_bowling_average = models.FloatField()
-	# odi_economy_rate = models.FloatField()
-	# odi_bowling_strike_rate = models.FloatField()
-	# odi_five_wicket_hauls = models.IntegerField()
-	# odi_ten_wicket_hauls = models.IntegerField()
-	
+	@staticmethod
+	def create_inning(inning_row, new_player_object):
+		inning_obj = Inning( runs_scored = inning_row["runs"],
+							 balls_faced = inning_row["balls"],
+							 was_out = inning_row["was_out"],
+							 fours = inning_row["fours"],
+							 sixes = inning_row["sixes"],
+							 minutes_batted = inning_row["minutes"],
+							 opposition = inning_row["opposition"],
+							 date = inning_row["date"],
+							 game_type = inning_row["Type"])
+		inning_obj.player = new_player_object
+		inning_obj.save()
+		return inning_obj

@@ -31,6 +31,7 @@ class SquadScraper:
 		return returnVal
 
 
+
 class ProfileScraper:
 	
 	def __init__(self, profile_id):
@@ -52,7 +53,7 @@ class ProfileScraper:
 
 		# Lookup dict for month number, given full month name
 		month_dict = dict((v,k) for k,v in enumerate(calendar.month_name))
-
+		player_info["Country"] = self.soup.find_all("h1", "SubnavSitesection")[0].get_text().split("/\n")[1].strip()
 		player_full_name = self.soup.find("p", "ciPlayerinformationtxt").find("span").getText()
 		player_name_array = re.split(" ", player_full_name)
 		length = len(player_name_array)
@@ -99,9 +100,7 @@ class ProfileScraper:
 		return batting_stats
 
 
-class InningsScraper:
-	def __init__(self, profile_id):
-		self.profile_id = profile_id		
+class InningsScraper:		
 
 	class_lookup = {
 		"Test" : "1",
@@ -115,9 +114,16 @@ class InningsScraper:
 		"U19ODI": 21,
 	}
 
-	def test_innings_scraper(self):
-		innings_url = "http://stats.espncricinfo.com/ci/engine/player/" + self.profile_id + ".html?class=1;template=results;type=batting;view=innings"
+	def __init__(self, profile_id):
+		self.url = "http://stats.espncricinfo.com/ci/engine/player/" + profile_id + ".html?class=1;template=results;type=batting;view=innings"
 		response = urllib.urlopen(profile_url)
 		self.soup = BeautifulSoup(response.read())
 
-	# def odi_innings_scraper(self):
+	def scrape(self):
+		innings_tr_list = self.soup.find_all("tr", "data1")
+		td_tags_names = ["runs", "minutes", "balls", "fours", "sixes", ]
+		for	index in range(1,len(innings_tr_list)):
+			data_tags = innings_tr_list.find_all("td")
+
+		
+	

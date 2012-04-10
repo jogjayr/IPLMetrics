@@ -3,19 +3,25 @@ from  django.http import HttpResponse
 from player_db.utils import ProfileScraper, SquadScraper
 from player_db.models import Player, BattingStat
 from django.db import transaction
+from django.views.generic import TemplateView
 import json, re, csv
+
+
+
+class IndexView(TemplateView):
+	template_name = "index.html"
 
 #view method for adding a player's stats at url to the DB
 
 @transaction.commit_on_success
 def player_add(request, cric_info_id):
 
-	if(len(Player.objects.filter(cricinfo_id=cric_info_id)) == 0):
+	# if(len(Player.objects.filter(cricinfo_id=cric_info_id)) == 0):
 		#means the player's not in our database
 		scraper = ProfileScraper(cric_info_id)
 		profile_info = scraper.scrape_profile()
 
-		new_player_object = Player.create_player(profile_info["player_info"], cric_info_id)
+		# new_player_object = Player.create_player(profile_info["player_info"], cric_info_id)
 		returnVal = ""
 		
 		if(new_player_object.id != None):
@@ -28,12 +34,12 @@ def player_add(request, cric_info_id):
 
 				
 
-			return HttpResponse(returnVal)
+			return HttpResponse(json.dumps(profile_info))
 		else:
 			return HttpResponse("error scraping profile")
 
-	else:
-		return HttpResponse("We already had him")
+	# else:
+	# 	return HttpResponse("We already had him")
 
 
 ## Pass this method an IPL team name (one of those defined in SquadScraper.scrape_squad)
